@@ -18,12 +18,15 @@
   "devDependencies": {
     "@eslint/js": "^9.23.0",
     "@types/bun": "^1.2.0",
+    "@types/node": "^25.5.0",
     "eslint": "^9.23.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
   },
   "dependencies": {
+    "@cliffy/prompt": "npm:@jsr/cliffy__prompt",
+    "@cliffy/table": "npm:@jsr/cliffy__table",
     "yaml": "^2.8.3",
     "zod": "^4.3.6"
   }
