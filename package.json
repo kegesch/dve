@@ -1,0 +1,26 @@
+{
+  "name": "dve",
+  "version": "0.1.0",
+  "description": "Decision Validation Engine — validates architectural decisions before implementation",
+  "type": "module",
+  "bin": {
+    "dve": "./src/cli/index.ts"
+  },
+  "scripts": {
+    "build": "bun build ./src/cli/index.ts --compile --outfile dve",
+    "dev": "bun --watch src/cli/index.ts",
+    "test": "bun test",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.23.0",
+    "@types/bun": "^1.2.0",
+    "eslint": "^9.23.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.27.0"
+  }
+}

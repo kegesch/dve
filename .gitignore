@@ -1,6 +1,10 @@
 node_modules/
 dist/
+dve
+dve.exe
+coverage/
 .env
 .env.*
 *.log
+bun.lockb
 decisions/.session/

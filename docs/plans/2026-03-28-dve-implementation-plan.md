@@ -6,7 +6,7 @@
 Set up the TypeScript project with all tooling, build, and test infrastructure.
 
 **Issues:**
-- [#1] Scaffold TypeScript project with pnpm, tsup, vitest, eslint, prettier
+- [#1] Scaffold TypeScript project with Bun, eslint, prettier
 - [#2] Define Zod schemas for all domain models (DEC, ASM, SPK, Context, Session)
 - [#3] Implement domain types and ID minting (DEC-YYYY-NNN, ASM-YYYY-NNN, SPK-YYYY-NNN)
 

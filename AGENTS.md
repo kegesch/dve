@@ -10,15 +10,15 @@ Clean architecture. Dependencies point inward only: `CLI → Infrastructure → 
 
 ## Tech Stack
 
-TypeScript (strict, ESM), Node.js 22+, pnpm, Cliffy (CLI), Vercel AI SDK (agent), Zod (schemas), yaml (eijemerv), dockerode (spikes), vitest, tsup, eslint, prettier.
+TypeScript (strict, ESM), Bun, Cliffy (CLI), Vercel AI SDK (agent), Zod (schemas), yaml (eijemerv), dockerode (spikes), eslint, prettier.
 
 ## Commands
 
 ```bash
-pnpm build       # tsup
-pnpm test        # vitest
-pnpm lint        # eslint
-pnpm typecheck   # tsc --noEmit
+bun run build      # bun build --compile (standalone binary)
+bun test           # bun:test built-in
+bun run lint       # eslint
+bun run typecheck  # tsc --noEmit
 ```
 
 Run all of these after completing work. Fix any failures before committing.

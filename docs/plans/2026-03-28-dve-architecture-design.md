@@ -64,16 +64,16 @@ Spikes run in throwaway Docker containers with strict isolation: read-only files
 | Layer | Technology |
 |-------|-----------|
 | Language | TypeScript (strict) |
-| Runtime | Node.js 22+ |
+| Runtime | Bun |
 | CLI Framework | Cliffy |
-| Package Manager | pnpm |
+| Package Manager | Bun |
 | Agent SDK | Vercel AI SDK |
 | Schema Validation | Zod |
 | YAML | yaml (eijemerv) |
 | Docker API | dockerode |
 | Container Runtime | Docker |
-| Build | tsup |
-| Test | vitest |
+| Build | bun build --compile |
+| Test | bun:test (built-in) |
 | Lint | eslint + prettier |
 | Typecheck | tsc --noEmit |
 
