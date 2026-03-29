@@ -1,1 +1,37 @@
-export {}
+export {
+  SessionStateEnum,
+  AssumptionClassEnum,
+  AssumptionStatusEnum,
+  EvidenceSourceEnum,
+  SignalTypeEnum,
+  DecisionTypeEnum,
+  DecisionStatusEnum,
+  SpikeAnswerEnum,
+  SpikeExecutedByEnum,
+  AssumptionSchema,
+  DecisionSchema,
+  SpikeSchema,
+  Arc42ContextSchema,
+  StackContextSchema,
+  GapsContextSchema,
+  SessionStateSchema,
+} from './validation/schemas'
+
+export type {
+  SessionState,
+  AssumptionClass,
+  AssumptionStatus,
+  EvidenceSource,
+  SignalType,
+  DecisionType,
+  DecisionStatus,
+  SpikeAnswer,
+  SpikeExecutedBy,
+  Assumption,
+  Decision,
+  Spike,
+  Arc42Context,
+  StackContext,
+  GapsContext,
+  SessionStateRecord,
+} from './validation/schemas'
