@@ -57,8 +57,8 @@ export class FileSessionStore implements SessionStorePort {
   async loadConversation(): Promise<readonly ConversationEntry[]> {
     if (!existsSync(this.conversationFile)) return []
     const content = await readFile(this.conversationFile, 'utf-8')
-    const lines = content.split('\n').filter((l) => l.trim().length > 0)
-    return lines.map((line) => JSON.parse(line) as ConversationEntry)
+    const lines = content.split('\n').filter((l: string) => l.trim().length > 0)
+    return lines.map((line: string) => JSON.parse(line) as ConversationEntry)
   }
 
   async saveDraft(record: Assumption | Spike): Promise<void> {
@@ -80,7 +80,7 @@ export class FileSessionStore implements SessionStorePort {
     }
 
     const files = await readdir(this.draftsDir)
-    const yamlFiles = files.filter((f) => f.endsWith('.yaml'))
+    const yamlFiles = files.filter((f: string) => f.endsWith('.yaml'))
 
     const assumptions: Assumption[] = []
     const spikes: Spike[] = []
