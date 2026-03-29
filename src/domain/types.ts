@@ -35,3 +35,13 @@ export type {
   GapsContext,
   SessionStateRecord,
 } from './validation/schemas'
+
+export { KnowledgeGraph } from './graph/knowledge-graph'
+
+export type {
+  RecordType,
+  RelationType,
+  GraphNodeData,
+  GraphNode,
+  GraphEdge,
+} from './graph/types'
