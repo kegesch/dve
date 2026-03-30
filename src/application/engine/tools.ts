@@ -83,6 +83,15 @@ const dropSpikeTool: ToolDefinition = {
   }),
 }
 
+const deferSpikeTool: ToolDefinition = {
+  name: 'deferSpike',
+  description: 'Defer a proposed spike for post-commit execution',
+  parameters: z.object({
+    spikeId: z.string(),
+    reason: z.string(),
+  }),
+}
+
 const transitionTool: ToolDefinition = {
   name: 'transition',
   description: 'Propose transition to a different state in the pipeline',
@@ -158,6 +167,7 @@ const ALL_TOOLS: readonly ToolDefinition[] = [
   approveSpikeTool,
   modifySpikeTool,
   dropSpikeTool,
+  deferSpikeTool,
   transitionTool,
   updateRiskRankingTool,
   executeSpikeTool,
@@ -196,6 +206,7 @@ const STATE_TOOL_WHITELIST: Record<SessionState, readonly string[]> = {
     'approveSpike',
     'modifySpike',
     'dropSpike',
+    'deferSpike',
     'transition',
   ],
   SPIKE_EXECUTING: [

@@ -18,6 +18,22 @@ export {
 } from './spike-planning'
 export type { SpikePlanningContext } from './spike-planning'
 
+export {
+  buildSpikeReviewContext,
+  approveSpike,
+  modifySpike,
+  dropSpike,
+  deferSpike,
+  formatSpikeForReview,
+  validateModifiedSpike,
+} from './spike-review'
+export type {
+  SpikeAction,
+  ProposedSpikeView,
+  SpikeReviewContext,
+  SpikeReviewResult,
+} from './spike-review'
+
 export { buildCommitGateContext, generateCommitBrief } from './commit-gate'
 export type { CommitGateContext, CommitBrief } from './commit-gate'
 

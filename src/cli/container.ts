@@ -18,6 +18,10 @@ import {
   createWriteAssumptionTool,
   createProposeSpikeTool,
   createExecuteSpikeTool,
+  createApproveSpikeTool,
+  createModifySpikeTool,
+  createDropSpikeTool,
+  createDeferSpikeTool,
 } from '../infrastructure/agent/tool-dispatcher'
 import { YamlGraphStore } from '../infrastructure/graph/yaml-graph.store'
 import { FileSessionStore } from '../infrastructure/store/file-session.store'
@@ -145,5 +149,9 @@ function buildTools(
       (ids) => mintSpikeId(year, ids),
     ),
     createExecuteSpikeTool(spikeRunner),
+    createApproveSpikeTool(sessionStore),
+    createModifySpikeTool(sessionStore),
+    createDropSpikeTool(sessionStore),
+    createDeferSpikeTool(sessionStore),
   ]
 }

@@ -529,13 +529,14 @@ describe('tools', () => {
     expect(names).toContain('writeAssumption')
   })
 
-  test('SPIKE_REVIEW has approve/modify/drop tools', () => {
+  test('SPIKE_REVIEW has approve/modify/drop/defer tools', () => {
     const tools = getToolsForState('SPIKE_REVIEW')
     const names = tools.map((t) => t.name)
 
     expect(names).toContain('approveSpike')
     expect(names).toContain('modifySpike')
     expect(names).toContain('dropSpike')
+    expect(names).toContain('deferSpike')
   })
 
   test('isToolAllowed returns true for allowed tool', () => {
@@ -556,6 +557,7 @@ describe('tools', () => {
     expect(names).toContain('approveSpike')
     expect(names).toContain('modifySpike')
     expect(names).toContain('dropSpike')
+    expect(names).toContain('deferSpike')
     expect(names).toContain('transition')
     expect(names).toContain('updateRiskRanking')
     expect(names).toContain('executeSpike')

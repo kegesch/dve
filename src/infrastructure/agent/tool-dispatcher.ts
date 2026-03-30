@@ -7,6 +7,7 @@ import type {
   ToolResult,
   GraphStorePort,
   HumanIOPort,
+  SessionStorePort,
 } from '../../application/ports'
 import type { SpikeRunnerPort } from '../../application/ports'
 import { KnowledgeGraph } from '../../domain/graph/knowledge-graph'
@@ -291,6 +292,242 @@ export function createExecuteSpikeTool(spikeRunner: SpikeRunnerPort): ToolPort {
         return {
           success: false,
           error: err instanceof Error ? err.message : 'Spike execution failed',
+        }
+      }
+    },
+  }
+}
+
+export function createApproveSpikeTool(
+  sessionStore: SessionStorePort,
+): ToolPort {
+  const Args = z.object({ spikeId: z.string() })
+
+  return {
+    name: 'approveSpike',
+    async execute(args): Promise<ToolResult> {
+      const parsed = Args.safeParse(args)
+      if (!parsed.success) {
+        return { success: false, error: parsed.error.message }
+      }
+
+      try {
+        const drafts = await sessionStore.loadDrafts()
+        const spike = drafts.spikes.find((s) => s.id === parsed.data.spikeId)
+        if (!spike) {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} not found in drafts`,
+          }
+        }
+        if (spike.scope.approved_by !== 'pending') {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} is not in pending state (approved_by: ${spike.scope.approved_by})`,
+          }
+        }
+
+        const approved = {
+          ...spike,
+          scope: { ...spike.scope, approved_by: 'human' },
+        }
+        await sessionStore.saveDraft(approved)
+        return {
+          success: true,
+          data: {
+            id: approved.id,
+            approved_by: approved.scope.approved_by,
+          },
+        }
+      } catch (err) {
+        return {
+          success: false,
+          error: err instanceof Error ? err.message : 'Failed to approve spike',
+        }
+      }
+    },
+  }
+}
+
+export function createModifySpikeTool(
+  sessionStore: SessionStorePort,
+): ToolPort {
+  const Args = z.object({
+    spikeId: z.string(),
+    killingQuestion: z.string().optional(),
+    timeboxDays: z.number().optional(),
+  })
+
+  return {
+    name: 'modifySpike',
+    async execute(args): Promise<ToolResult> {
+      const parsed = Args.safeParse(args)
+      if (!parsed.success) {
+        return { success: false, error: parsed.error.message }
+      }
+
+      try {
+        const drafts = await sessionStore.loadDrafts()
+        const spike = drafts.spikes.find((s) => s.id === parsed.data.spikeId)
+        if (!spike) {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} not found in drafts`,
+          }
+        }
+        if (spike.scope.approved_by !== 'pending') {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} is not in pending state`,
+          }
+        }
+
+        const modified = {
+          ...spike,
+          killing_question:
+            parsed.data.killingQuestion ?? spike.killing_question,
+          scope: {
+            ...spike.scope,
+            timebox_days: parsed.data.timeboxDays ?? spike.scope.timebox_days,
+          },
+        }
+
+        if (modified.killing_question.trim().length === 0) {
+          return {
+            success: false,
+            error: 'Killing question must not be empty',
+          }
+        }
+        if (modified.scope.timebox_days < 1) {
+          return {
+            success: false,
+            error: 'Timebox must be at least 1 day',
+          }
+        }
+        if (modified.scope.timebox_days > 30) {
+          return {
+            success: false,
+            error: 'Timebox must not exceed 30 days',
+          }
+        }
+
+        await sessionStore.saveDraft(modified)
+        return {
+          success: true,
+          data: {
+            id: modified.id,
+            killing_question: modified.killing_question,
+            timebox_days: modified.scope.timebox_days,
+          },
+        }
+      } catch (err) {
+        return {
+          success: false,
+          error: err instanceof Error ? err.message : 'Failed to modify spike',
+        }
+      }
+    },
+  }
+}
+
+export function createDropSpikeTool(sessionStore: SessionStorePort): ToolPort {
+  const Args = z.object({
+    spikeId: z.string(),
+    reason: z.string(),
+  })
+
+  return {
+    name: 'dropSpike',
+    async execute(args): Promise<ToolResult> {
+      const parsed = Args.safeParse(args)
+      if (!parsed.success) {
+        return { success: false, error: parsed.error.message }
+      }
+
+      try {
+        const drafts = await sessionStore.loadDrafts()
+        const spike = drafts.spikes.find((s) => s.id === parsed.data.spikeId)
+        if (!spike) {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} not found in drafts`,
+          }
+        }
+
+        const assumption = drafts.assumptions.find(
+          (a) => a.id === spike.validates_assumption,
+        )
+        if (assumption) {
+          const acceptedBet = {
+            ...assumption,
+            status: 'accepted-bet' as const,
+            evidence: {
+              source: 'review' as const,
+              finding: `Spike ${spike.id} dropped: ${parsed.data.reason}. Assumption accepted as conscious bet.`,
+            },
+          }
+          await sessionStore.saveDraft(acceptedBet)
+        }
+
+        return {
+          success: true,
+          data: {
+            droppedSpikeId: spike.id,
+            acceptedBetAssumptionId: assumption?.id ?? null,
+            reason: parsed.data.reason,
+          },
+        }
+      } catch (err) {
+        return {
+          success: false,
+          error: err instanceof Error ? err.message : 'Failed to drop spike',
+        }
+      }
+    },
+  }
+}
+
+export function createDeferSpikeTool(sessionStore: SessionStorePort): ToolPort {
+  const Args = z.object({
+    spikeId: z.string(),
+    reason: z.string(),
+  })
+
+  return {
+    name: 'deferSpike',
+    async execute(args): Promise<ToolResult> {
+      const parsed = Args.safeParse(args)
+      if (!parsed.success) {
+        return { success: false, error: parsed.error.message }
+      }
+
+      try {
+        const drafts = await sessionStore.loadDrafts()
+        const spike = drafts.spikes.find((s) => s.id === parsed.data.spikeId)
+        if (!spike) {
+          return {
+            success: false,
+            error: `Spike ${parsed.data.spikeId} not found in drafts`,
+          }
+        }
+
+        const deferred = {
+          ...spike,
+          scope: { ...spike.scope, approved_by: 'deferred' },
+        }
+        await sessionStore.saveDraft(deferred)
+        return {
+          success: true,
+          data: {
+            id: deferred.id,
+            approved_by: deferred.scope.approved_by,
+            reason: parsed.data.reason,
+          },
+        }
+      } catch (err) {
+        return {
+          success: false,
+          error: err instanceof Error ? err.message : 'Failed to defer spike',
         }
       }
     },
