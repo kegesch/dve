@@ -1,6 +1,7 @@
 import { loadConfig } from './config'
 import { createContainer } from './container'
 import { runInit } from './commands/init'
+import { runNew } from './commands/new'
 
 async function main() {
   const args = process.argv.slice(2)
@@ -13,6 +14,7 @@ async function main() {
     console.log(
       '  init    Build persistent context from docs, ADRs, and codebase',
     )
+    console.log('  new     Start a decision validation session')
     console.log('  --help  Show this help message')
     console.log()
     console.log('Options:')
@@ -23,6 +25,7 @@ async function main() {
   }
 
   const cliOptions: Record<string, string> = {}
+  const positionalArgs: string[] = []
   for (let i = 1; i < args.length; i++) {
     if (args[i]?.startsWith('--') && args[i + 1]) {
       const key = args[i]!.slice(2).replace(/-([a-z])/g, (_, c: string) =>
@@ -30,17 +33,28 @@ async function main() {
       )
       cliOptions[key] = args[i + 1]
       i++
+    } else if (!args[i]?.startsWith('--')) {
+      positionalArgs.push(args[i]!)
     }
   }
 
+  const config = loadConfig({
+    provider: cliOptions['provider'],
+    model: cliOptions['model'],
+    decisionsDir: cliOptions['decisionsDir'],
+  })
+
   if (command === 'init') {
-    const config = loadConfig({
-      provider: cliOptions['provider'],
-      model: cliOptions['model'],
-      decisionsDir: cliOptions['decisionsDir'],
-    })
     const container = createContainer(config)
     await runInit(container, process.cwd())
+    return
+  }
+
+  if (command === 'new') {
+    const container = createContainer(config)
+    const goal =
+      positionalArgs.length > 0 ? positionalArgs.join(' ') : undefined
+    await runNew(container, goal)
     return
   }
 
