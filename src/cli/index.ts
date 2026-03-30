@@ -3,6 +3,7 @@ import { createContainer } from './container'
 import { runInit } from './commands/init'
 import { runNew } from './commands/new'
 import { runCommit } from './commands/commit'
+import { runResume } from './commands/resume'
 
 async function main() {
   const args = process.argv.slice(2)
@@ -17,6 +18,7 @@ async function main() {
     )
     console.log('  new     Start a decision validation session')
     console.log('  commit  Commit a decision with sign-offs')
+    console.log('  resume  Resume an interrupted session')
     console.log('  --help  Show this help message')
     console.log()
     console.log('Options:')
@@ -63,6 +65,12 @@ async function main() {
   if (command === 'commit') {
     const container = createContainer(config)
     await runCommit(container)
+    return
+  }
+
+  if (command === 'resume') {
+    const container = createContainer(config)
+    await runResume(container)
     return
   }
 
