@@ -2,6 +2,7 @@ import { loadConfig } from './config'
 import { createContainer } from './container'
 import { runInit } from './commands/init'
 import { runNew } from './commands/new'
+import { runCommit } from './commands/commit'
 
 async function main() {
   const args = process.argv.slice(2)
@@ -15,6 +16,7 @@ async function main() {
       '  init    Build persistent context from docs, ADRs, and codebase',
     )
     console.log('  new     Start a decision validation session')
+    console.log('  commit  Commit a decision with sign-offs')
     console.log('  --help  Show this help message')
     console.log()
     console.log('Options:')
@@ -55,6 +57,12 @@ async function main() {
     const goal =
       positionalArgs.length > 0 ? positionalArgs.join(' ') : undefined
     await runNew(container, goal)
+    return
+  }
+
+  if (command === 'commit') {
+    const container = createContainer(config)
+    await runCommit(container)
     return
   }
 
